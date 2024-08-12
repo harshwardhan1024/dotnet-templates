@@ -1,0 +1,16 @@
+name: Build Template
+on:
+  push:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - run: cd working
+      - name: Run dotnet pack
+        run: dotnet pack
+      
