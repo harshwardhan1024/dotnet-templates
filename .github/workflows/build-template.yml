@@ -10,8 +10,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-      - run: actions/checkout@v4
       - run: pwd
+      - run: ls
+      - run: echo $(pwd)
+      - run: echo $(ls)
       - run: cd content
       - name: Run dotnet pack
         run: dotnet pack
