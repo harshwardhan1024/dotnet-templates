@@ -18,7 +18,9 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Run dotnet pack
-        run: dotnet pack -c Release -p:PackageVersion=${{ github.ref_name }}
+        run: |
+          TAG=${{ github.ref_name }}
+          dotnet pack -c Release -p:PackageVersion=${TAG#v}
 
       - name: Push package to Nuget
         run: dotnet nuget push ../bin/Release/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
