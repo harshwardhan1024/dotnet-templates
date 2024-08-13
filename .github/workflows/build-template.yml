@@ -1,48 +1,25 @@
-name: Build Template
+name: Release
+
 on:
   push:
-    branches: [master]
+    tags:
+    - '*.*.*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Run dotnet pack
+        run: cd content && dotnet pack -c Release -p:PackageVersion=${{ github.ref_name }}
 
-      - name: Generate Semantic Version
-        id: generate-semantic-version
-        uses: paulhatch/semantic-version@v5.4.0
-
-      - run: echo ${{ steps.generate-semantic-version.outputs.version }}
-
-      - name: Generate Semantic Version
-        id: generate-semantic-version-2
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: ''
-          bump_each_commit: true
-
-      - run: echo ${{ steps.generate-semantic-version-2.outputs.version }}
-
-
-      - name: Generate Semantic Version
-        id: generate-semantic-version-3
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: ''
-          bump_each_commit: true
-          change_path: 'content'
-
-      - run: echo ${{ steps.generate-semantic-version-3.outputs.version }}
-
-      # - name: Run dotnet pack
-      #   run: cd content && dotnet pack -c Release -/p:Version=${{ steps.generate-semantic-version.outputs.version }}
-
-      # - name: Push package to Nuget
-      #   run: dotnet nuget push ../bin/Release/HarshMatharu.Templates.1.0.0.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json
+      - name: Push package to Nuget
+        run: dotnet nuget push ../bin/Release/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       
